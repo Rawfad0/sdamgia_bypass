@@ -28,9 +28,17 @@ class TestSolver:
         options.add_argument("--headless")
         self.anon = webdriver.Chrome(path, options=options)
 
-    def num2url(self):
-        pass
+    @staticmethod
+    def num2url(nums):
+        if str(type(nums)) == "<class 'list'>":
+            url_list = [f'https://rus-ege.sdamgia.ru/problem?id={num}' for num in nums]
+            return url_list
+        if (str(type(nums)) == "<class 'str'>") or (str(type(nums)) == "<class 'int'>"):
+            num = nums
+            url = f'https://rus-ege.sdamgia.ru/problem?id={num}'
+            return url
 
+    @staticmethod
     def url2num(self):
         pass
 
