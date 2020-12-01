@@ -1,6 +1,10 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from time import sleep
+try:
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+except Exception as ex:
+    print(ex)
+    print('Install "selenium" using this command: "pip3 install selenium"')
 
 
 class TestSolver:
@@ -24,6 +28,15 @@ class TestSolver:
         options.add_argument("--headless")
         self.anon = webdriver.Chrome(path, options=options)
 
+    def num2url(self):
+        pass
+
+    def url2num(self):
+        pass
+
+    def parse_answer(self):
+        pass
+
     # вход в аккаунт
     def authorisation(self):
         self.auth.get('https://inf-ege.sdamgia.ru/')
@@ -31,6 +44,9 @@ class TestSolver:
         auth_form[0].send_keys(self.log)
         auth_form[1].send_keys(self.pas)
         self.auth.find_elements_by_tag_name('button')[0].click()
+
+    def auth_check(self):
+        pass
 
     # переход на страницу теста и парсинг ссылок на страницы с заданиями
     def exercise_parsing(self):
@@ -66,3 +82,15 @@ class TestSolver:
         sleep(self.test_time)
         self.auth.find_elements_by_tag_name('input')[-1].click()
         sleep(3)
+
+    def answer_change(self, num, answer):
+        self.answers[num+1] = answer
+
+    def input_parsing(self):
+        pass
+
+    def input_answers(self):
+        pass
+
+    def finish_test(self):
+        pass
