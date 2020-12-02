@@ -39,8 +39,14 @@ class TestSolver:
             return url
 
     @staticmethod
-    def url2num(self):
-        pass
+    def url2num(urls):
+        if str(type(urls)) == "<class 'list'>":
+            num_list = [url[url.index('=') + 1:] for url in urls]
+            return num_list
+        if (str(type(urls)) == "<class 'str'>") or (str(type(urls)) == "<class 'int'>"):
+            url = urls
+            num = url[url.index('=') + 1:]
+            return num
 
     def parse_answer(self):
         pass
