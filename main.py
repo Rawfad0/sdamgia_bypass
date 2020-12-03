@@ -21,7 +21,7 @@ class TestSolver:
         self.test_id = test_id
         self.test_time = test_time
 
-        self.href_list = []
+        self.url_list = []
         self.answers = []
 
         options = Options()
@@ -48,9 +48,6 @@ class TestSolver:
             num = url[url.index('=') + 1:]
             return num
 
-    def parse_answer(self):
-        pass
-
     # вход в аккаунт
     def authorisation(self):
         self.auth.get('https://inf-ege.sdamgia.ru/')
@@ -68,37 +65,42 @@ class TestSolver:
         sleep(3)
         exercises = self.auth.find_elements_by_class_name('prob_nums')
         href_list = list(map(lambda num: num.find_element_by_partial_link_text('').get_attribute('href'), exercises))
-        self.href_list = href_list
+        self.url_list = href_list
 
-    # парсинг и вывод ответов из страниц с заданиями
+    def parse_answer(self, url):
+        self.anon.get(url)
+        sleep(0.1)
+        raw_answer = self.anon.find_element_by_class_name('answer')
+        answer = raw_answer.get_attribute('textContent').strip('Ответ: ')
+        return answer
+
     def answers_parsing(self):
-        href_list = self.href_list
-        answers = []
-        for i in range(len(href_list)):
-            href = href_list[i]
-            self.anon.get(href)
-            sleep(0.1)
-            raw_answer = self.anon.find_element_by_class_name('answer')
-            answer = raw_answer.get_attribute('textContent').strip('Ответ: ')
-            answers.append(answer)
+        url_list = self.url_list
+        answers = [self.parse_answer(url) for url in url_list]
         self.anon.quit()
         self.answers = answers
 
     def answers_print(self):
         answers = self.answers
+        print('№\tid\t\tanswer')
+        for i in range(len(answers)):
+            print(f'{i + 1}:\t{answers[i]}')
+
+    def answer_change(self, num, answer):
+        self.answers[num+1] = answer
+
+    def answers_input(self):
+        answers = self.answers
         inp_list = list(self.auth.find_elements_by_tag_name('input')[7:-1])
         for i in range(len(answers)):
             self.auth.execute_script("return arguments[0].scrollIntoView(true);", inp_list[i])
             sleep(1)
-            print(i+1, end=' ')
+            print(i + 1, end=' ')
             inp_list[i].send_keys(answers[i])
         print('\n')
         sleep(self.test_time)
         self.auth.find_elements_by_tag_name('input')[-1].click()
         sleep(3)
-
-    def answer_change(self, num, answer):
-        self.answers[num+1] = answer
 
     def input_parsing(self):
         pass
