@@ -57,21 +57,30 @@ class TestSolver:
         self.auth.find_elements_by_tag_name('button')[0].click()
 
     def auth_check(self):
-        pass
+        target_object = self.auth.find_element_by_xpath('/html/body/div[1]/div[4]/div[3]/script[1]')
+        target_text = target_object.get_attribute('textContent')
+        target_bool = target_text[target_text.index('=') + 2:target_text.index(';')]
+        if target_bool is True:
+            return False
+        elif target_bool is False:
+            return True
+        else:
+            raise Exception
 
     # переход на страницу теста и парсинг ссылок на страницы с заданиями
     def exercise_parsing(self):
         self.auth.get(f'https://inf-ege.sdamgia.ru/test?id={self.test_id}')
         sleep(3)
         exercises = self.auth.find_elements_by_class_name('prob_nums')
-        href_list = list(map(lambda num: num.find_element_by_partial_link_text('').get_attribute('href'), exercises))
+        href_list = [num.find_element_by_partial_link_text('').get_attribute('href') for num in exercises]
         self.url_list = href_list
 
     def parse_answer(self, url):
         self.anon.get(url)
         sleep(0.1)
         raw_answer = self.anon.find_element_by_class_name('answer')
-        answer = raw_answer.get_attribute('textContent').strip('Ответ: ')
+        answer = raw_answer.get_attribute('textContent')
+        answer = answer[answer.index(':')+1:]
         return answer
 
     def answers_parsing(self):
@@ -88,6 +97,10 @@ class TestSolver:
 
     def answer_change(self, num, answer):
         self.answers[num+1] = answer
+
+    @staticmethod
+    def scroll(driver, target):
+        driver.execute_script("return arguments[0].scrollIntoView(true);", target)
 
     def answers_input(self):
         answers = self.answers
@@ -109,4 +122,10 @@ class TestSolver:
         pass
 
     def finish_test(self):
+        pass
+
+    def table_parse(self):
+        pass
+
+    def table_print(self):
         pass
